@@ -1,4 +1,5 @@
 #!/usr/bin/expect
+# edit 20170618T224849Z
 
 set pw  [lindex $argv 0]
 #send_user  "$pw\n"

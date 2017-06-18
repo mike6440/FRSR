@@ -1,0 +1,59 @@
+THIS FILE: su_frsr0.txt
+Editdate: 20170417T171932Z
+FRSRSN: 3-1
+MFRSN: 374
+
+		DATA FILES ---------------------
+RT OUT PATH: data
+
+SERVERIP: 192.168.127.254
+SERVERPORT: 4001
+PCIP: 192.168.127.250
+
+     SOCKET SERVER   KAIMEI: 10.198.5.1 4025
+TELNET SERVER IP: 0
+	TELNET SERVER IP: 192.168.255.10
+TELNET SERVER PORT: 
+
+	========================
+		EXPERIMENT INFO
+	========================
+EXPERIMENT NAME: UW dock
+GEOGRAPHIC LOCATION: Seattle
+		two characters for a ship code
+PLATFORM NAME: UW
+LOCATION ON PLATFORM: dock
+HEIGHT ABOVE SEA LEVEL m: 6
+SHIP TYPE: na
+SHIP NAME: na
+CRUISE NAME: --
+	port or starboard
+PLATFORM SIDE: north
+
+MISSING VALUE: -999
+
+	========================
+		COMMENTS/LOG
+	========================
+COMMENTS:
+ 20170417T180715Z
+ FRSR3 initial setup
+END
+
+	========================
+		FIXED POSITION -- NO GPS
+		(hub port=-1)
+	========================
+	# UW OCEAN DOCK
+GPS FIXED LATITUDE: 47.64962
+GPS FIXED LONGITUDE: -122.31312
+		Magnetic variation, + = East of true.  true=mag-var
+GPS FIXED VARIATION: 16.2
+		# MOSS BAY
+	GPS FIXED LATITUDE: 35
+	GPS FIXED LONGITUDE: -122
+			Magnetic variation, + = East of true
+	GPS FIXED VARIATION: 18.1
+	========================
+		END SETUP FILE
+	========================

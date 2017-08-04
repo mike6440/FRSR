@@ -1,0 +1,34 @@
+#!/usr/bin/expect --
+# Make an Archive and continue data collection
+set log_user 1
+
+	# Spawn Stopfrsr,  expect "sw/$"
+spawn KillScreen
+expect "sw/$"
+spawn Cleanupfrsr
+expect "sw/$"
+
+	# Spawn ArchiveFrsr, expect "sw/$"
+spawn ArchiveFrsr
+expect "sw/$"	
+
+	# Spawn ClearFrsrData, expect "(y or n):"
+spawn ClearFrsrData
+	# Reply 'y'
+expect "(y or n):"
+send "y\r\n"
+expect "sw/$"
+
+	# start screen
+spawn screen -S FRSR -t FRSR -dm
+interact
+#spawn /usr/bin/screen -S FRSR -d -m -c /Users/rmr/Dropbox/swmain/apps/FRSR/sw/tools/screeeenrc_frsr.txt
+expect "sw/$"
+spawn screen -ls
+puts "Done"
+exit 0
+
+	# Spawn Startfrsr, expect "sw/$"
+spawn screen {-S FRSR -p 2 -X stuff "G$(printf \\r)"}
+expect "sw/$"
+	# end

@@ -20,15 +20,14 @@ send "y\r\n"
 expect "sw/$"
 
 	# start screen
-spawn screen -S FRSR -t FRSR -dm
-interact
-#spawn /usr/bin/screen -S FRSR -d -m -c /Users/rmr/Dropbox/swmain/apps/FRSR/sw/tools/screeeenrc_frsr.txt
+set scrpid [spawn screen -S FRSR -c /Users/rmr/Dropbox/swmain/apps/FRSR/sw/tools/screenrc_frsr.txt]
+send -i $scrpid "ls\r\n"
 expect "sw/$"
-spawn screen -ls
-puts "Done"
-exit 0
 
-	# Spawn Startfrsr, expect "sw/$"
-spawn screen {-S FRSR -p 2 -X stuff "G$(printf \\r)"}
-expect "sw/$"
-	# end
+puts "done"
+exit 0
+# 
+# 	# Spawn Startfrsr, expect "sw/$"
+# spawn screen {-S FRSR -p 2 -X stuff "G$(printf \\r)"}
+# expect "sw/$"
+# 	# end

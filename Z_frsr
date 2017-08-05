@@ -1,10 +1,10 @@
 #!/usr/bin/expect --
-#Z_rosr_v6
+#Z_frsr_v6
 
-set PROGRAMNAME Z_rosr
-set VERSION 1
-set EDITDATE 170526; #160730; #160718; #151116,1437;	#150417;	#150404
-# 
+set PROGRAMNAME Z_frsr
+set VERSION 2
+set EDITDATE 170805
+# v2 add simulation 
 
 puts "
 RUN PROGRAM $PROGRAMNAME, VERSION $VERSION, EDITDATE $EDITDATE"
@@ -23,44 +23,52 @@ if [catch {open $setupfile} sufile] {
 #	puts "SETUP FILE $setupfile --- EXISTS"
 #}
 
-global ROSR ROSRPID ROSRAV ROSRAVPID
+global FRSR FRSRPID FRSRAV FRSRAVPID
 global infoname
+#========================================================
+#		PROCEDURE TO SIMULATE FRSR -- v2
+#========================================================
+proc SpawnFrsrSimulate { } {
+	global FRSR FRSRPID infoname
+		# Spawn simulate_prp
+	set FRSRID [spawn perl simulate_frsr]
+	set FRSR $spawn_id
+	write_info $infoname "Spawn simulate_frsr"
+}
 #========================================================
 		# PROCEDURE TO CONNECT TO INSTRUMENT
 #============================================================
-proc SpawnRosr { hub_url rosrport} {
-	global ROSR ROSRPID infoname
-	if {$rosrport == 0} {
-		set ROSRPID [spawn perl simulate/rosr_simulator]
-		set ROSR $spawn_id 
-		write_info $infoname "SPAWN ROSR SIMULATE, spawn_id = $ROSR, pid = $ROSRPID"
-		send_user "ROSR SIMULATE\n"
+proc SpawnFrsr { hub_url frsrport} {
+	global FRSR FRSRPID infoname
+	if {$frsrport == 0} {
+		set FRSRPID [spawn perl simulate/frsr_simulator]
+		set FRSR $spawn_id 
+		write_info $infoname "SPAWN FRSR SIMULATE, spawn_id = $FRSR, pid = $FRSRPID"
+		send_user "FRSR SIMULATE\n"
 	} else {
-		set str [spawn_kermit $hub_url $rosrport]
-		set ROSR [lindex $str 0];    
-		set ROSRPID [lindex $str 1];
-		write_info $infoname "SPAWN ROSR KERMIT, IP=$hub_url, port=$rosrport, spawn_id=$ROSR, pid=$ROSRPID"
+		set str [spawn_kermit $hub_url $frsrport]
+		set FRSR [lindex $str 0];    
+		set FRSRPID [lindex $str 1];
+		write_info $infoname "SPAWN FRSR KERMIT, IP=$hub_url, port=$frsrport, spawn_id=$FRSR, pid=$FRSRPID"
 	}
 }
-
 #==========================================
-#   PROCEDURE TO START AVGROSR PROGRAM
+#   PROCEDURE TO START AVGFRSR PROGRAM
 #==========================================
-# proc SpawnAvgRosr { setupfile } {
-# 	global ROSRAV  ROSRAVPID infoname
-# 	set ROSRAVPID [spawn perl avgrosr $setupfile]
-# 	set ROSRAV $spawn_id
-# 	write_info $infoname "SPAWN ROSRAV spawn_id = $ROSRAV,  pid=$ROSRAVPID"
+# proc SpawnAvgFrsr { setupfile } {
+# 	global FRSRAV  FRSRAVPID infoname
+# 	set FRSRAVPID [spawn perl avgfrsr $setupfile]
+# 	set FRSRAV $spawn_id
+# 	write_info $infoname "SPAWN FRSRAV spawn_id = $FRSRAV,  pid=$FRSRAVPID"
 # 			# WAIT FOR THE STARTUP PROMPT
 # 	set timeout 5
 # 	expect {
 # 				# REPLY FROM AVG PROGRAM
-# 		"avgrosr--" {
-# 			send_user "AVGROSR is ready\n"
+# 		"avgfrsr--" {
+# 			send_user "AVGFRSR is ready\n"
 # 		}
 # 	}
 # }
-
 #====================================================================
 		# PROCEDURE WRITE_INFO
 		# input
@@ -74,51 +82,48 @@ proc write_info {fname str} {
 	exec echo $str >> $fname
 	return $str
 }
-
-#===========================================================================
-# PROCEDURE TO CONNECT TO A PORT USING KERMIT
-# input
-#	serialport = full path name for the serial port, e.g. /dev/tty.usbserial0
-#   baud = desired baud rate, e.g. 9600
-#============================================
-proc spawn_kermit {hub_url portnumber} {
-	global infoname
-			# START PROCESS -- KERMIT
-	set pid [spawn kermit]
+#========================================================
+		# PROCEDURE TO CONNECT TO FRSR (COM1) v3
+#============================================================
+proc SpawnFrsr { } {
+	global FRSR FRSRPID
+		# Find the USB port
+	set usbport [exec perl FindUSBPort 1]
+		# START PROCESS -- KERMIT FOR RS232
+	set FRSRPID [spawn kermit]
+	set FRSR $spawn_id
+	set timeout 2
 	expect {
-		timeout {send_user "KERMIT FAILS TO OPEN\n"; exit 1}
+		timeout {"KERMIT FAILS TO OPEN\n"; exit 1}
 		">>"
 	}
-	
-			# OPEN THE PORT
-	send "set host $hub_url $portnumber\r"
+	write_info "SPAWN FRSR KERMIT, spawn_id = $FRSR,  pid = $FRSRPID"
+		# OPEN line
+	send "set line $usbport\r"
 	expect ">>"
-	send "set tcp keepalive on 0\r\n"
+	write_info "RS232 CONNECT TO $usbport"
+		# speed
+	send "set speed 115200\r"
 	expect ">>"
-	send "set tcp linger OFF\r\n"
+		# duplex
+	send "set duplex half\r"
 	expect ">>"
-	send "set tcp nodelay on\r\n"
+		# flow control
+	send "set flow none\r"
 	expect ">>"
-	send "set telnet echo local\r\n"
+		# carrier watch
+	send "set carrier-watch off\r"
 	expect ">>"
-			# this is important for using the rsr menu
-			# raw means send CR by itself, not CRLF and NOT CRNul
-	send "set telnet newline-mode nvt raw\r\n"
-	expect ">>"
-			# CONNECT 
+	## CONNECT 
 	send "connect\r"
 	expect {
-		timeout {send_user "TIMEOUT, NO CONNECT"; exit 1}
-		"Conn*---"  { }  #v15
+		"Conn*---" { write_info "SERIAL CONNECTED TO $usbport"; }  
+		timeout {send_user "FRSR SERIAL TIMEOUT, NO CONNECT"; exit 1}
 	}
-	set out $spawn_id;
-	lappend out $pid
-	return $out
 }
-
 #==================== END PROCEDURES =============================================
 
-exec echo "START ROSR3 [timestamp -gmt -format "%Y%m%d,%H%M%S"]" > /tmp/sbd
+exec echo "START FRSR3 [timestamp -gmt -format "%Y%m%d,%H%M%S"]" > /tmp/sbd
 
 		#============
 		# DATAPATH
@@ -146,82 +151,79 @@ spawn -noecho getsetupinfo $setupfile "CALIBRATION EMISSIVITY"
 expect -re "(\.*)(\r)";
 set e_cal $expect_out(1,string)
 
-if { $e_cal == 0 } { 
-	write_info $infoname "RUN MODE."
-	send_user "RUN MODE.\n"
-			## PLATFORM NAME
-	spawn -noecho getsetupinfo $setupfile "PLATFORM NAME"
-	expect -re "(\.*)(\r)";
-	write_info $infoname  "PLATFORM NAME: $expect_out(1,string)"
-
-			## LOCATION ON PLATFORM
-	spawn -noecho getsetupinfo $setupfile "LOCATION ON PLATFORM"
-	expect -re "(\.*)(\r)";
-	write_info $infoname  "LOCATION ON PLATFORM: $expect_out(1,string)"
-
-			## HEIGHT ABOVE SEA LEVEL
-	spawn -noecho getsetupinfo $setupfile "HEIGHT ABOVE SEA LEVEL"
-	expect -re "(\.*)(\r)";
-	write_info $infoname  "HEIGHT ABOVE SEA LEVEL: $expect_out(1,string)"
-
-			## EXPERIMENT NAME
-	spawn -noecho getsetupinfo $setupfile "EXPERIMENT NAME"
-	expect -re "(\.*)(\r)";
-	set expname $expect_out(1,string)
-	write_info $infoname  "EXPERIMENT NAME: $expname"
-
-			## GEOGRAPHIC LOCATION
-	spawn -noecho getsetupinfo $setupfile "GEOGRAPHIC LOCATION"
-	expect -re "(\.*)(\r)";
-	write_info $infoname  "GEOGRAPHIC LOCATION: $expect_out(1,string)"
-
-} else {
-	write_info $infoname "CAL MODE."
-	send_user "CALIBRATION MODE.\n"
-}
-		## ROSR PORT
-spawn -noecho getsetupinfo $setupfile "ROSR HUB COM NUMBER"
+	# OPEN SERIAL CONNECTION - v2 include simulate
+spawn -noecho getsetupinfo $setupfile "SIMULATEFLAG"
 expect -re "(\.*)(\r)";
-set rosrport $expect_out(1,string)
-write_info $infoname  "ROSR HUB COM NUMBER: $rosrport"
-
-		#=================
-		# OPEN SET FILE NAMES AND NOTE TIME
-		#=================
-		# day0 = START JULIAN DAY
+set simulateflag $expect_out(1,string)
+send_user "SIMULATEFLAG = $simulateflag\n"
+if { $simulateflag == 1 } { 
+	send_user "SIMULATE_FRSR\n";
+	SpawnFrsrSimulate;
+} else {
+	send_user "STANDARD FRSR SERIAL\n";
+	#SpawnFrsr;
+}
+		## PLATFORM NAME
+spawn -noecho getsetupinfo $setupfile "PLATFORM NAME"
+expect -re "(\.*)(\r)";
+write_info $infoname  "PLATFORM NAME: $expect_out(1,string)"
+		## LOCATION ON PLATFORM
+spawn -noecho getsetupinfo $setupfile "LOCATION ON PLATFORM"
+expect -re "(\.*)(\r)";
+write_info $infoname  "LOCATION ON PLATFORM: $expect_out(1,string)"
+		## HEIGHT ABOVE SEA LEVEL
+spawn -noecho getsetupinfo $setupfile "HEIGHT ABOVE SEA LEVEL"
+expect -re "(\.*)(\r)";
+write_info $infoname  "HEIGHT ABOVE SEA LEVEL: $expect_out(1,string)"
+		## EXPERIMENT NAME
+spawn -noecho getsetupinfo $setupfile "EXPERIMENT NAME"
+expect -re "(\.*)(\r)";
+set expname $expect_out(1,string)
+write_info $infoname  "EXPERIMENT NAME: $expname"
+		## GEOGRAPHIC LOCATION
+spawn -noecho getsetupinfo $setupfile "GEOGRAPHIC LOCATION"
+expect -re "(\.*)(\r)";
+write_info $infoname  "GEOGRAPHIC LOCATION: $expect_out(1,string)"
+		## FRSR PORT
+spawn -noecho getsetupinfo $setupfile "FRSR HUB COM NUMBER"
+expect -re "(\.*)(\r)";
+set frsrport $expect_out(1,string)
+write_info $infoname  "FRSR HUB COM NUMBER: $frsrport"
+	#=================
+	# OPEN SET FILE NAMES AND NOTE TIME
+	#=================
+	# day0 = START JULIAN DAY
 set day0 0
-		# OPEN SERIAL PORTS
-SpawnRosr $hub_url $rosrport 
-		# OPEN AVG PROGRAMS
-SpawnAvgRosr $setupfile 
-
-		#====================
-		# TIMING PARAMETERS
-		#====================
-		# SET dt0 SO THE FIRST AVG WILL BE TRANSMITTED
+	# OPEN SERIAL PORTS
+#SpawnFrsr $hub_url $frsrport 
+	# OPEN AVG PROGRAMS
+#SpawnAvgFrsr $setupfile 
+	#====================
+	# TIMING PARAMETERS
+	#====================
+	# SET dt0 SO THE FIRST AVG WILL BE TRANSMITTED
 # set dt0 [expr [timestamp -gmt] -100]
 set timeout 30		;# leave enough time for the scan drum to move
-
-		# =====================
-		# MAIN LOOP
-		#======================
+	# =====================
+	# MAIN LOOP
+	#======================
 write_info $infoname "===== BEGIN MAIN LOOP ====="
-
-		#=================
-		# EXPECT LOOP
-		#=================
+send_user "===== BEGIN MAIN LOOP =====\n"
+	#=================
+	# EXPECT LOOP
+	#=================
 while 1 {
-		# LOOP TIME $dt
+	# LOOP TIME $dt
 	set dt [timestamp -gmt]
-			# CHECK FOR A NEW DAY -- NEW FILES
+		# CHECK FOR A NEW DAY -- NEW FILES
 	set day1 [timestamp -format "%j" -seconds $dt]
 	if {$day1 != $day0} {
 		set day0 $day1
 		set fname [timestamp -format "%y%m%d" -seconds $dt]
 		write_info $infoname "NEW DAY $fname";
-		set rwname "$datapath/rosr_raw_$fname.txt";
-		set avname "$datapath/rosr_av_$fname.txt";
-		set sstname "$datapath/rosr_sst_$fname.txt";
+		set rwname "$datapath/frsr_raw_$fname.txt";
+		set avname "$datapath/frsr_av_$fname.txt";
+		set sstname "$datapath/frsr_sst_$fname.txt";
 		write_info $infoname "---NEW DAY $fname---"
 		write_info $infoname "rwname = $rwname"
 		write_info $infoname "avname = $avname"
@@ -231,7 +233,7 @@ while 1 {
 	# EXPECT FUNCTION -- WAITING FOR RESPONSE
 	# ===============
 	expect { 
-		-i $ROSR 
+		-i $FRSR 
 		-re "\\\$WIR...*\\*..\\n?" {
 			set rawstr [string trimright $expect_out(0,string)]
 			if { [string match {*\$WIROS*} $rawstr ] } {
@@ -247,9 +249,9 @@ while 1 {
 				set F [open $rwname a 0600]
 				puts $F $str  ;
 				close $F
-				# SEND TO ROSRAV AND ROSRAV FOR RESPONSE
-				send -i $ROSRAV "$str\r"
-				expect -i $ROSRAV -re "<<.*>>\\n?" {
+				# SEND TO FRSRAV AND FRSRAV FOR RESPONSE
+				send -i $FRSRAV "$str\r"
+				expect -i $FRSRAV -re "<<.*>>\\n?" {
 					send_user "avg okay\n";
 				}
 			} 

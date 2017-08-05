@@ -1,0 +1,32 @@
+#! /usr/bin/perl
+# edit 170805
+
+use lib $ENV{MYLIB};
+use perltools::MRtime;
+
+$fin="simulate/frsr.txt";
+
+my $irec = 0;
+my ($i1,$narg,$p);
+
+$narg = $#ARGV;
+if($narg>=0){
+	foreach(@ARGV){print"  $_\n"}
+}
+
+while (1) {
+	$irec = 0;
+	open(F,"<$fin") or die("fin error\n");
+
+	# Loop through all the data records.
+	while (<F>) {
+		chomp( $str = $_);
+		print"$str\r\n";
+		if($str =~ /\$FSR03/){
+			sleep(5);
+			$irec++;
+		}
+	}
+	print"Starting over\n";
+	close F;
+}

@@ -1,30 +1,24 @@
+~/swmain/apps/FRSR/sw/$ cat kermfrsr
 #!/usr/bin/expect --
 #kermit_serial_connect.ex
 #Note: the file .kermrc has the command "prompt k>>"
-# call
-#   kerm232 [port [baud]]
-#   kerrm232                         -- no args. port = FindUSBPort, 9600 baud
-#   kerrm232 19200                   -- 1 arg. port = FindUSBPort, baud=19200
-#   kerm232 /dev/ttyusbserial 115200 -- port and baud
-
 
 set log_user 0
 
 ## DEFINE THE PORTS
 set argc [llength $argv]
+#	puts "kerm232 [[port] speed]"
+#	puts "Examples:"
+#	puts "   kerm232 /dev/ttyUSB0 9600"
+#	puts "   kerm232 19200"
+#	puts "   kerm232"
+#	puts "--------------------------------"
 
-if {$argc == 0} {
-	set inport [exec FindUSBPort]
-	set bd 9600
-} elseif {$argc == 1} {
-	set inport [exec FindUSBPort]
-	set bd [lindex $argv 0];
-} else {
-	set inport [lindex $argv 0]
-	set bd [lindex $argv 1]
-}
-#puts "INPUT PORT $inport"
-#puts "INPUT BAUD $bd"
+set inport /dev/ttyr00
+set bd 115200
+puts "INPUT PORT $inport"
+puts "INPUT BAUD $bd"
+
 
 # START PROCESS -- KERMIT FOR ISAR MODEM
 spawn kermit
@@ -57,15 +51,18 @@ expect ">>"
 send "set carrier-watch off\r"
 expect ">>"
 ## LOG
-send "log session ../data/capture_kerm232.txt append\r"
+puts "Log session to ../data/capturefrsr.txt append";
+send "log session ../data/capturefrsr.txt append\r"
 expect ">>"
-## CONNECT 
+## CONNECT
 send "connect\r"
 expect {
 	"Conn*---"  {send_user "TTY CONNECTED\n"}
 	timeout {send_user "TIMEOUT, NO CONNECT"; exit 1}
 }
 
+
 set spawn_id $ISAR
 interact
+
 exit 0

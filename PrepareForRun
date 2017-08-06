@@ -24,7 +24,7 @@ use lib "$ENV{DAQLIB}";
 use perltools::MRtime;
 use perltools::MRutilities;
 
-print"home = $ENV{HOME}\n";
+print"home = $ENV{HomePath}\n";
 print"data = $ENV{DAQDATAFOLDER}\n";
 
 $setupfile=$ENV{SETUPFILE};
@@ -47,15 +47,9 @@ print"MAIN DATA FOLDER: $fndata\n";
 # CREATE THE NEW DATA FOLDER FOR THIS RUN
 #========================
 my $dt0 = now();
-if($e_cal==0){
-	$fndata = sprintf "$fndata/data_%s", dtstr($dt0,'iso');
-	`mkdir $fndata`;
-	print"RUN DATA FOLDER = $fndata\n";
-} else {
-	$fndata = sprintf "$fndata/datacal_%s", dtstr($dt0,'iso');
-	`mkdir $fndata`;
-	print"CALIBRATION DATA FOLDER = $fndata\n";
-}
+$fndata = sprintf "$fndata/data_%s", dtstr($dt0,'iso');
+`mkdir $fndata`;
+print"RUN DATA FOLDER = $fndata\n";
 
 #========================
 # MOVE THE SETUP FILE INTO THIS FOLDER

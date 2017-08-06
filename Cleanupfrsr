@@ -8,21 +8,22 @@ chomp($usr);
 	#=================
 @removelist=("kermit","expect","perl");
 foreach $xx (@removelist){
-	$cmd="ps -u $usr -o pid,command | grep \"$xx\"";
-	#print"test 1 cmd = $cmd\n";
+	$cmd="ps -u $usr -o pid,command | grep $xx";
+	#print"test0 cmd = $cmd\n";
 	@pslist = `$cmd`;
-	#$ii=0; foreach(@pslist){chomp($_); print"test 0 $ii, $pslist[$ii]\n"; $ii++}
+	#$ii=0; foreach(@pslist){chomp($_); print"test1 $ii, $pslist[$ii]\n"; $ii++} 
 	foreach $pscmd (@pslist){
-		chomp($pscmd);
-		#print"test 2 $pscmd\n";
-		if( $pscmd =~ /grep/){
-			#print"test 3 $pscmd\n";
-		} else {
-			#print"test 4 $pscmd\n";
-			@d=split/[ ]+/,$pscmd;
-			$cmd="kill -9 $d[0]";
-			#print"test 5 cmd = $cmd\n";
-			`$cmd`;
+		if($pscmd =~ /$xx/){
+			if( $pscmd !~ /Cleanupfrsr/){
+				chomp($pscmd);
+				$pscmd =~ s/^\s+//;
+				#print"test2 $pscmd\n";
+				@d=split/[ \t]+/,$pscmd;
+# 				#$ii=0; foreach(@d){print"$ii, $d[$ii]\n"; $ii++} 
+				$cmd="kill -9 $d[0] 2>/dev/null";
+				print"$pscmd -- $cmd\n";
+				`kill -9 $d[0] 2>/dev/null`;
+			}
 		}
 	}
 }

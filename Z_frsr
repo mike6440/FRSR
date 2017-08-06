@@ -227,7 +227,7 @@ while 1 {
 			set rawstr [string trimright $expect_out(0,string)]
 			send_user "$rawstr\n";
 			set F [open $rwname a 0600]
-			puts $F $str  ;
+			puts $F $rawstr  ;
 			close $F
 		}
 	}

@@ -10,35 +10,33 @@ my @v = ();
 printf"NOW = %d\n",now();
 
 	# SELECT STREAM
-my $is;
-for($is=0; $is<=$#f; $is++){
-	my $f=$f[$is];
-	print"$f";
+my ($is,$s,$cmd,$f,$age);
 
+for($is=0; $is<=$#f; $is++){
+	$f=$f[$is];
+	#print"$f";
 		# LAST RECORD TIME
-	my $cmd = sprintf("LastDataTime %s_raw",$f);
-	my $s = `$cmd`;
+	$cmd = sprintf("LastDataTime %s_raw",$f);
+	$s = `$cmd`;
 	chomp($s); 
-	my @s = split /[ ]+/, $s;
-	printf"    %d", $s[1];
+	$s =~ s/^\s+//;
+	$s =~ s/\s+$//;
+	print"Last rec time = $s\n";
 
 		# THE AGE OF THE RECORD
-	if($s[1]==0){
+	if($s==0){
 		print"    0 -- RECORD FAILURE.\n",$f;
 		push @v,0;		
 	} else {
-		my $age = now() - $s[1];
-		print"    $age";
+		$age = now() - $s;
+		print"age = $age\n";
 		if ($age > 600){ print"    FAIL\n"; push @v,0}
 		else{ print"    OK\n"; push @v, 1;  }
 	}
 }
-
-#print"Verify = @v\n";
-
 my $good=1;
 foreach(@v){if($_ == 0){$good=0}}
-#print"good = $good\n";
+print"good = $good\n";
 `echo $good > /tmp/tmpdaq`;
 
 exit 0

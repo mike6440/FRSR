@@ -154,7 +154,7 @@ if { $simulateflag == 1 } {
 	SpawnFrsrSimulate;
 } else {
 	send_user "STANDARD FRSR SERIAL\n";
-	#SpawnFrsr;
+	SpawnFrsr;
 }
 		## PLATFORM NAME
 spawn -noecho getsetupinfo $setupfile "PLATFORM NAME"

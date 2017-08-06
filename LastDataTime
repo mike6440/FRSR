@@ -5,7 +5,15 @@ use lib $ENV{MYLIB};
 use perltools::MRtime;
 use perltools::MRutilities;
 
-my $a = shift();
-`LastDataRecord $a`;
-system(FrsrPacketTime);
+my (@a, $a, $s, $cmd);
+
+$a = shift();
+chomp($a);
+$s = `LastDataRecord $a`;
+chomp($s);
+$s =~ s/^\s+//; $s =~ s/\s+$//;
+$cmd=sprintf "FrsrPacketTime '%s'",$s;
+$a=`$cmd`;
+chomp($a);
+printf"%s  %s\n",$a,dtstr($a,'ssv');
 exit 0;

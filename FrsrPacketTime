@@ -38,7 +38,7 @@ if($simflag == 1){
 			$dmy=substr($strin,$i-7,6);
 			#print"$hms   $dmy\n";
 			$dtgps=datesec(substr($dmy,4,2)+2000,substr($dmy,2,2),substr($dmy,0,2),substr($hms,0,2),substr($hms,2,2),substr($hms,4,2));
-			printf"%d\n",$dtgps;
+			printf"%d %s\n",$dtgps, dtstr($dtgps,'ssv');
 		}
 	}
 }

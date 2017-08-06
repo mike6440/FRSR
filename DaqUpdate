@@ -4,25 +4,25 @@ use lib $ENV{MYLIB};
 use perltools::MRtime;
 use perltools::MRutilities;
 
-my @f = ('frsr');
+my @f = ('frsr_raw');
 my @v = ();
 
-printf"NOW = %d\n",now();
+printf"NOW = %d  %s\n",now(),dtstr(now(),'ssv');
 
 	# SELECT STREAM
-my ($is,$s,$cmd,$f,$age);
+my ($is,$s,$cmd,$f,$age,@a);
 
 for($is=0; $is<=$#f; $is++){
 	$f=$f[$is];
 	#print"$f";
 		# LAST RECORD TIME
-	$cmd = sprintf("LastDataTime %s_raw",$f);
+	$cmd = sprintf("LastDataTime %s",$f);
 	$s = `$cmd`;
 	chomp($s); 
-	$s =~ s/^\s+//;
-	$s =~ s/\s+$//;
+	$s =~ s/^\s+//; $s =~ s/\s+$//;
 	print"Last rec time = $s\n";
-
+	@a=split /[ ]+/,$s;
+	$s=$a[0];
 		# THE AGE OF THE RECORD
 	if($s==0){
 		print"    0 -- RECORD FAILURE.\n",$f;

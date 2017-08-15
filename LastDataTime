@@ -12,6 +12,10 @@ chomp($a);
 $s = `LastDataRecord $a`;
 chomp($s);
 $s =~ s/^\s+//; $s =~ s/\s+$//;
+open(F,'>/tmp/lastrec') or die;
+print F $s;
+close F;
+
 $cmd=sprintf "FrsrPacketTime '%s'",$s;
 $a=`$cmd`;
 chomp($a);

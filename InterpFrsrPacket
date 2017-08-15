@@ -7,13 +7,14 @@
 use lib "$ENV{DAQLIB}";
 use perltools::MRtime;
 
-$strin=sprintf "%s",`cat /tmp/pkt`;
+$strin=shift();
+#$strin=sprintf "%s",`cat /tmp/pkt`;
 $ix = index($strin,'*');
 $strin=substr($strin,0,$ix+3);
 
 # HIGH PACKET
 #$strin = '$FSR03,H,39.7,<<$GPRMC,182944,A,3551.0209,N,10616.3588,W,000.0,239.4,280517,>>,noK9,ZPZP,nPmP,^;f=D;<;G:<<j=,];d=E;9;D:B<j=,eHT1,Z;];e;i;m;1<0<o;i;P8B1G0d0K2F:e;a;g;f;c;_;];00,g=d=e=c=W=c=f=_=<<\332o1U2C:Z=`=_=_=\=e=e=c=00,G;A;M;L;B;L;G;L;I8O1F111O21:C;l:U;H;=;L;E;L;00,:;<;H;7;H;K;J;I;G;L:e2X0c001G7?;i;D;A;2;=;:;00,J:I:T:U:V:V:S:T:H7n0Y0S0F2Q9Q:Q:L:T:N:J:G:H:00,7<@<R<^<`<a<Y<T<S;33_0U0i0d7E<G<N<K<J<H<H<B<00,j=j=j=j=j=j=j=j=Q<g2i0_0V1Z:j=j=j=j=j=j=j=j=00,*2B';
-
+#$strin='$FSR03,L,34.3,<<$GPRMC,040140,A,3551.0194,N,10616.3562,W,000.0,188.4,080817,>>,H<W8,@MBM,iPnP,00<08040A03080,0080=0<0=050A0,00N0,*71';
 # 83B3, temp T1 T2
 # MNEN, pitch p1 p2
 # PRKR, roll r1 r2
@@ -44,8 +45,9 @@ $strin=substr($strin,0,$ix+3);
 # 00X?, shadow/limit, if Low mode shadow is set to 00
 # *11
 
-
-$strin=`cat /tmp/lastrec`;
+#$strin='$GPRMC,040053,A,3551.0194,N,10616.3562,W,000.0,188.4,080817,>>,H<W8,BMBM,lPnP,00D050=0>0=090,00D050607020=0,00N0,*76';
+#$strin='$FSR03,L,83B3,>N<N,bReR,00000000000000,00000000000010,00X?,*11';
+#$strin='$FSR03,L,34.3,<<$GPRMC,040053,A,3551.0194,N,10616.3562,W,000.0,188.4,080817,>>,H<W8,BMBM,lPnP,00D050=0>0=090,00D050607020=0,00N0,*76';
 $strin =~ s/^\s+//;
 $strin =~ s/\s+$//;
 print"strin = $strin\n";
@@ -58,8 +60,8 @@ $#sw = 23 * 7;
 
 ## CHKSUM TEST
 $cc = NmeaChecksum( substr($strin,0,-2) );
-#printf"chksum=%s\n",substr($strin,-2);
-#printf"computed chksum=%s\n", $cc;
+printf"chksum=%s\n",substr($strin,-2);
+printf"computed chksum=%s\n", $cc;
 if ($cc ne substr($strin,-2)) {
 	print"Checksum fails, skip\n";
 } else {

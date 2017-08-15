@@ -1,43 +1,33 @@
 THIS FILE: su_frsr0.txt
-Editdate: 20170417T171932Z
+Editdate: 20170813T195236Z
 FRSRSN: 3-1
 MFRSN: 374
-
 	# DATA FILES
 RT OUT PATH: data
 	# 0 = normal operation,    1 = simulate
-SIMULATEFLAG: 1
-
-	========================
-		EXPERIMENT INFO
-	========================
+SIMULATEFLAG: 0
+	# EXPERIMENT INFO
 EXPERIMENT NAME: MARCUS
 GEOGRAPHIC LOCATION: Seattle
-		two characters for a ship code
 PLATFORM NAME: AA
 LOCATION ON PLATFORM: !!
 HEIGHT ABOVE SEA LEVEL m: !!
 SHIP TYPE: ICEBREAKER
 SHIP NAME: AURORA AUSTRALIS
 CRUISE NAME: !!
-	port or starboard
+	# port or starboard
 PLATFORM SIDE: !!
 
 MISSING VALUE: -999
-	========================
-		COMMENTS/LOG
-	========================
+	# COMMENTS/LOG
 COMMENTS:
  FRSR3 initial setup
 END
-	========================
-		FIXED POSITION -- NO GPS
-		(hub port=-1)
-	========================
+	# FIXED POSITION -- NO GPS
 	# UW OCEAN DOCK
 GPS FIXED LATITUDE: 47.64962
 GPS FIXED LONGITUDE: -122.31312
-		Magnetic variation, + = East of true.  true=mag-var
+	# Magnetic variation, + = East of true.  true=mag-var
 GPS FIXED VARIATION: 16.2
 		# MOSS BAY
 	GPS FIXED LATITUDE: 35

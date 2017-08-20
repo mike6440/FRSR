@@ -51,8 +51,8 @@ expect ">>"
 send "set carrier-watch off\r"
 expect ">>"
 ## LOG
-puts "Log session to ../data/capturefrsr.txt append";
-send "log session ../data/capturefrsr.txt append\r"
+puts "Log session to ../data/capture.txt append";
+send "log session ../data/capture.txt append\r"
 expect ">>"
 ## CONNECT
 send "connect\r"

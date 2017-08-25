@@ -1,4 +1,3 @@
-~/swmain/apps/FRSR/sw/$ cat kermfrsr
 #!/usr/bin/expect --
 #kermit_serial_connect.ex
 #Note: the file .kermrc has the command "prompt k>>"
@@ -14,7 +13,7 @@ set argc [llength $argv]
 #	puts "   kerm232"
 #	puts "--------------------------------"
 
-set inport /dev/ttyr00
+set inport "/dev/tty.UC-232AC"
 set bd 115200
 puts "INPUT PORT $inport"
 puts "INPUT BAUD $bd"

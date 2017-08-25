@@ -2,7 +2,10 @@
 
 @w = `ls /dev/tty*PL* 2>/dev/null`;
 @x = `ls /dev/tty*USB* 2>/dev/null`;
-@w=(@w,@x);
+@y = `ls /dev/tty*UC* 2>/dev/null`;
+@z = `ls /dev/ttyr0* 2>/dev/null`;
+
+@w=(@w,@x,@y,@z);
 if ( $#w < 0 ){exit 1}
 chomp($w[0]);
 print"$w[0]";

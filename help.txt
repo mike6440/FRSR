@@ -4,47 +4,42 @@
 
 ssh oper@198.129.80.47      password: r0srr0sr  (use ifconfig for wifi ip#)
 
-gtdaq        --  go to "~/swmain/apps/FRSR/sw/$ "
+gtdaq                                             -> go to "~/swmain/apps/FRSR/sw/$ "
+Bat                                               -> battery charge (if we're using a laptop)
 
---- TIME --------------------------
-Date         --  2015 10 19 18 03 57 Z
-SetDate <password> yyyy MM dd hh mm ss  --  sets the PC clock
-example:
-  SetDate r0srr0sr 2016 05 20 17 23 30<enter>
+    ----TIME
+Date                                              ->  2015 10 19 18 03 57 Z
+SetDate <password> yyyy MM dd hh mm ss            ->  sets the PC clock
+  example:
+    SetDate r0srr0sr 2016 05 20 17 23 30<enter>
 
---- START OPERATION ---------------------
-Startfrsr    --  Begin data collection
-frsrraw      --  Confirm data flow  (^c to end)
+    ----START OPERATION
+Startfrsr                                         ->  Begin data collection
+frsrraw                                           ->  Confirm data flow  (^c to end)
 
---- STOP OPERATION ---------------------
-Stopfrsr     --  End data collection
+    ---- STOP OPERATION
+Stopfrsr                                          ->  End data collection
 
---- ARCHIVE DATA --------------------------
-ArchiveFrsr   -- Makes an archive file in /home/rmr/frsrdata
-ClearFrsrData -- Clears the data folder. (Checks y or n)
+    ---- ARCHIVE DATA
+ArchiveFrsr                                       -> Makes an archive file in /home/rmr/frsrdata
+ClearFrsrData                                     -> Clears the data folder. (Checks y or n)
 
---- DIRECT CONNECT -----------------
-P             --  direct connect to GPS
-I             --  direct connect to FRSR, "^\ q" to end
-  T           --    FRSR terminal mode
-    ?         --    terminal menu
-    g         --    Go. End terminal session. Start operation.
-^\ q          --  end direct connect. Hold down <Crtl> and '\'. Release and press 'q'. 
+    ---- DIRECT CONNECT
+P                                                 ->  direct connect to GPS
+I                                                 ->  direct connect to FRSR, "^\ q" to end
+  T                                               ->    FRSR terminal mode
+    ?                                             ->    terminal menu
+    g                                             ->    Go. End terminal session. Start operation.
+^\ q                                              ->  end direct connect.
+e.g. Hold down <Crtl> and '\'. Release and press 'q'. 
 
---- VIEW DATA -------------------------
-frsrraw     --  show $WIROS raw data, 280 sec, ^c to end
+    ---- VIEW DATA
+frsrraw                                           ->  show $WIROS raw data, 280 sec, ^c to end
+^c                                                -> end session
 
-
---- FRSR OUTPUT PACKETS ---
-frsraw -- packet only
+    ---- FRSR OUTPUT PACKETS
+frsraw                                            -> packet only
 $FSR03,L,40.6,<<$GPRMC,145203,A,3551.0201,N,10616.3598,W,000.0,188.4,010817,>>,83B3,?M<M,mPmP,J1c4f3Z3O344?2,L...,*6A
 Head temp = 40.6,      hhmmss                                        ddMMyy      Psuedo ascii ...                  chk
 
-
-'I' connection
-2/244.0/20                                                     --> 2=H mode, Radmv=244.0,  Threshold=20
--High-x3  h  p p  TempHead=40.56,  FrsrState=1, Rain 0/0       --> operation params.
-$FSR03,L,40.6,<<$GPRMC,145203,A,3551.0201,N,10616.3598,W,000.0,188.4,010817,>>,83B3,?M<M,mPmP,J1c4f3Z3O344?2,L1e4g3]3O3?4A2,00N0,*6A
-
------ END -----------------
-
+---- END 

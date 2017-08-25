@@ -38,13 +38,13 @@ proc SpawnFrsrSimulate { } {
 #========================================================
 		# PROCEDURE TO CONNECT TO FRSR
 #============================================================
-proc SpawnFrsr { hub_url frsrport} {
-	global FRSR FRSRPID infoname
-	set str [spawn kermfrsr]
-	set FRSR [lindex $str 0];    
-	set FRSRPID [lindex $str 1];
-	write_info $infoname "SPAWN FRSR KERMIT, IP=$hub_url, port=$frsrport, spawn_id=$FRSR, pid=$FRSRPID"
-}
+# proc SpawnFrsr { } {
+# 	global FRSR FRSRPID infoname
+# 	set str [spawn kermfrsr]
+# 	set FRSR [lindex $str 0];    
+# 	set FRSRPID [lindex $str 1];
+# 	#write_info $infoname "SPAWN FRSR KERMIT, IP=$hub_url, port=$frsrport, spawn_id=$FRSR, pid=$FRSRPID"
+# }
 #==========================================
 #   PROCEDURE TO START AVGFRSR PROGRAM
 #==========================================
@@ -79,7 +79,7 @@ proc write_info {fname str} {
 		# PROCEDURE TO CONNECT TO FRSR (COM1) v3
 #============================================================
 proc SpawnFrsr { } {
-	global FRSR FRSRPID
+	global FRSR FRSRPID infoname
 		# Find the USB port
 	set usbport [exec perl FindUSBPort 1]
 		# START PROCESS -- KERMIT FOR RS232
@@ -90,11 +90,10 @@ proc SpawnFrsr { } {
 		timeout {"KERMIT FAILS TO OPEN\n"; exit 1}
 		">>"
 	}
-	write_info "SPAWN FRSR KERMIT, spawn_id = $FRSR,  pid = $FRSRPID"
 		# OPEN line
 	send "set line $usbport\r"
 	expect ">>"
-	write_info "RS232 CONNECT TO $usbport"
+	write_info $infoname "RS232 CONNECT TO $usbport"
 		# speed
 	send "set speed 115200\r"
 	expect ">>"
@@ -110,7 +109,7 @@ proc SpawnFrsr { } {
 	## CONNECT 
 	send "connect\r"
 	expect {
-		"Conn*---" { write_info "SERIAL CONNECTED TO $usbport"; }  
+		"Conn*---" { send_user "SERIAL CONNECTED"; }  
 		timeout {send_user "FRSR SERIAL TIMEOUT, NO CONNECT"; exit 1}
 	}
 }
@@ -124,6 +123,7 @@ exec echo "START FRSR3 [timestamp -gmt -format "%Y%m%d,%H%M%S"]" > /tmp/sbd
 spawn -noecho getsetupinfo $setupfile "RT OUT PATH"
 expect -re "(\.*)(\r)";
 set datapath $expect_out(1,string)
+send_user "datapath $datapath\n";
 
 	# INFONAME
 set infoname "$env(DAQDATAFOLDER)/info.txt";
@@ -132,6 +132,7 @@ write_info $infoname "  ========== BEGIN PROGRAM $PROGRAMNAME ============="
 write_info $infoname "PROGRAM $PROGRAMNAME, Version $VERSION, Editdate $EDITDATE, Runtime [timestamp -gmt -format "%Y%m%d,%H%M%S"]"
 write_info $infoname "INFORMATION FILE: $infoname"
 write_info $infoname  "RT OUT PATH: $datapath"
+
 
 	# PDS SERIAL HUB URL AND OFFSET
 spawn -noecho getsetupinfo $setupfile "SERIAL HUB URL"
@@ -223,7 +224,7 @@ while 1 {
 	# ===============
 	expect { 
 		-i $FRSR 
-		-re "\\\$FSR03...*\\*..\\n?" {
+		-re "\\\$FSR...*\\*..\\n?" {
 			set rawstr [string trimright $expect_out(0,string)]
 			send_user "$rawstr\n";
 			set F [open $rwname a 0600]

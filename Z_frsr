@@ -183,18 +183,13 @@ spawn -noecho getsetupinfo $setupfile "FRSR HUB COM NUMBER"
 expect -re "(\.*)(\r)";
 set frsrport $expect_out(1,string)
 write_info $infoname  "FRSR HUB COM NUMBER: $frsrport"
-	#=================
 	# OPEN SET FILE NAMES AND NOTE TIME
-	#=================
-	# day0 = START JULIAN DAY
 set day0 0
 	# OPEN SERIAL PORTS
 #SpawnFrsr $hub_url $frsrport 
 	# OPEN AVG PROGRAMS
 #SpawnAvgFrsr $setupfile 
-	#====================
 	# TIMING PARAMETERS
-	#====================
 	# SET dt0 SO THE FIRST AVG WILL BE TRANSMITTED
 # set dt0 [expr [timestamp -gmt] -100]
 set timeout 30		;# leave enough time for the scan drum to move
@@ -203,9 +198,7 @@ set timeout 30		;# leave enough time for the scan drum to move
 	#======================
 write_info $infoname "===== BEGIN MAIN LOOP ====="
 send_user "===== BEGIN MAIN LOOP =====\n"
-	#=================
 	# EXPECT LOOP
-	#=================
 while 1 {
 	# LOOP TIME $dt
 	set dt [timestamp -gmt]
@@ -216,8 +209,11 @@ while 1 {
 		set fname [timestamp -format "%y%m%d" -seconds $dt]
 		write_info $infoname "NEW DAY $fname";
 		set rwname "$datapath/frsr_raw_$fname.txt";
-		write_info $infoname "---NEW DAY $fname---"
 		write_info $infoname "rwname = $rwname"
+			# decode file
+		set interpname "$datapath/frsr_interp_$fname.txt";
+		write_info $infoname "file interpname = $interpname"
+		send_user "interpname $interpname\n";
 	}
 	#================
 	# EXPECT FUNCTION -- WAITING FOR RESPONSE
@@ -230,6 +226,8 @@ while 1 {
 			set F [open $rwname a 0600]
 			puts $F $rawstr  ;
 			close $F
+				# interp raw file
+			spawn InterpFrsrPacket $rawstr $interpname;
 		}
 	}
 }

@@ -7,95 +7,101 @@
 use lib "$ENV{DAQLIB}";
 use perltools::MRtime;
 
+my ($pktlen,$cc,$packetid,$mode,$shadow,$shadowthreshold,$ix,$i,$i1,$hms,$dmy);
+my (@g1,@g2,@sw, $strin, $lat,$lon,$sog,$cog,$strgps,@w,$outpkt, $outfile);
 $strin=shift();
-$ix = index($strin,'*');
+$outfile=shift();
+$i1 = 0;
+while ( 1 ){
+  $i = index($strin, "*", $i1);
+  last if ( $i < 0 );
+  $ix=$i;
+  $i1=$i+1;
+}
 $strin=substr($strin,0,$ix+3);
-print"$strin\n";
-#$strin='$GPRMC,040053,A,3551.0194,N,10616.3562,W,000.0,188.4,080817,>>,H<W8,BMBM,lPnP,00D050=0>0=090,00D050607020=0,00N0,*76';
-#$strin='$FSR03,L,83B3,>N<N,bReR,00000000000000,00000000000010,00X?,*11';
-#$strin='$FSR03,L,34.3,<<$GPRMC,040053,A,3551.0194,N,10616.3562,W,000.0,188.4,080817,>>,H<W8,BMBM,lPnP,00D050=0>0=090,00D050607020=0,00N0,*76';
 $strin =~ s/^\s+//;
 $strin =~ s/\s+$//;
-print"strin = $strin\n";
-
-# TEST LENGTH
-my ($pktlen,$cc,$packetid,$mode,$shadow,$shadowthreshold,$ix,$i,$hms,$dmy);
-my (@g1,@g2,@sw);
+	# TEST LENGTH
 $pktlen=length($strin);
-print"length=$pktlen\n";
 $#sw = 23 * 7;
-
-## CHKSUM TEST
+	## CHKSUM TEST
 $cc = NmeaChecksum( substr($strin,0,-2) );
-printf"chksum=%s\n",substr($strin,-2);
-printf"computed chksum=%s\n", $cc;
+#printf"chksum=%s\n",substr($strin,-2);
+#printf"computed chksum=%s\n", $cc;
 if ($cc ne substr($strin,-2)) {
 	print"Checksum fails, skip\n";
 } else {
-		# time
-	$i=index($strin,'<<');
-	$hms=substr($strin,$i+9,6);
-	$i=index($strin,'>>');
-	$dmy=substr($strin,$i-7,6);
-	#print"$hms   $dmy\n";
-	$dtgps=datesec(substr($dmy,4,2)+2000,substr($dmy,2,2),substr($dmy,0,2),substr($hms,0,2),substr($hms,2,2),substr($hms,4,2));
-	printf"%s\n",dtstr($dtgps,'csv');
-
-	$ichar=1;
-	# Header
-	$packetid = substr($strin,$ichar,5);
-	print"ID = $packetid\n";
-	$ichar+=6;
-	# Mode
+	$ichar=7;
+		# Mode
 	$mode=substr($strin,$ichar,1);
-	print"Mode = $mode\n";
-	$ichar+=2;
-	# T1,T2
+	$outpkt = sprintf"$mode";
+		# GPS time lat lon sog cog
+		#<<$GPRMC,182428,A,3551.0228,N,10616.3582,W,000.0,239.4,280517,>>
+	$i=index($strin,'<<');
+	$i1=index($strin,'>>');
+	if($i1-$i < 20){
+			# No GPS
+		$dtgps=now();
+		$lat=45; $lon=-122; $sog=0; $cog=0;
+	}else{
+		$strgps=substr($strin,$i+9,$i1-$i-10);
+		#print"\nstrgps=$strgps\n";
+		@w=split /[, ]+/g, $strgps;
+		#$ii=0;foreach(@w){print"$ii, $_\n"; $ii++;}
+		$hms=$w[0];
+		$dmy=$w[8];
+		$dtgps=datesec(substr($dmy,4,2)+2000,substr($dmy,2,2),substr($dmy,0,2),substr($hms,0,2),substr($hms,2,2),substr($hms,4,2));
+		$lat=substr($w[2],0,-7) + substr($w[2],-7)/60;if($w[3] eq 'S'){$lat=-$lat}
+		$lon=substr($w[4],0,-7) + substr($w[4],-7)/60;if($w[5] eq 'W'){$lon=-$lon}
+		$sog=$w[6];  $cog=$w[7];
+	}
+	$outpkt = $outpkt.sprintf", %s,  %.5f, %.5f, %.1f, %.1f",dtstr($dtgps,'csv'),$lat,$lon,$sog,$cog;
+	$ichar=$i1+3;
+		# T1,T2
 	$T1 = DecodePsuedoAscii2( substr($strin,$ichar,2) )/10-20;
 	$ichar+=2;
 	$T2 = DecodePsuedoAscii2( substr($strin,$ichar,2) )/10-20;
 	$ichar+=3;
-	printf"T1 = %.1f   T2 = %.1f\n",$T1,$T2;
-	# pitch1, pitch2
+	$outpkt = $outpkt.sprintf", %.1f, %.1f",$T1,$T2;
+		# pitch1, pitch2
 	$pitch1 = DecodePsuedoAscii2( substr($strin,$ichar,2) )/100-20;
 	$ichar+=2;
 	$pitch2 = DecodePsuedoAscii2( substr($strin,$ichar,2) )/100-20;
 	$ichar+=3;
-	printf"pitch1 = %.2f   pitch2 = %.2f\n",$pitch1,$pitch2;
-	# roll1, roll2
+	$outpkt = $outpkt.sprintf", %.2F, %.2f",$pitch1,$pitch2;
+		# roll1, roll2
 	$roll1 = DecodePsuedoAscii2( substr($strin,$ichar,2) )/100-20;
 	$ichar+=2;
 	$roll2 = DecodePsuedoAscii2( substr($strin,$ichar,2) )/100-20;
 	$ichar+=3;
-	printf"roll1 = %.2f   roll2 = %.2f\n",$roll1,$roll2;
-	# global 1
+	$outpkt = $outpkt.sprintf", %.2f, %.2f",$roll1,$roll2;
+		# global 1
 	$ix=$ichar;
 	for($i=0; $i<7; $i++){
 		push(@g1,DecodePsuedoAscii2( substr($strin,$ix,2) ) );
 		$ix+=2;
 	}
-	for($i=0; $i<7; $i++){
-		print"$g1[$i]  ";
-	}
-	print"\n";
-	# global 2
+		# global 2
 	$ichar+=15;
 	$ix=$ichar;
 	for($i=0; $i<7; $i++){
 		push(@g2,DecodePsuedoAscii2( substr($strin,$ix,2) ) );
 		$ix+=2;
 	}
-	for($i=0; $i<7; $i++){
-		print"$g2[$i]  ";
-	}
-	print"\n";
-	# shadow, limit
+		# shadow, limit
 	$ichar+=15;
 	$shadow = DecodePsuedoAscii2( substr($strin,$ichar,2) )/10;
 	$ichar+=2;
 	$shadowthreshold = DecodePsuedoAscii2( substr($strin,$ichar,2) )/10;
 	$ichar+=3;
-	printf"shadow = %.1f   shadowthreshold = %.1f\n",$shadow,$shadowthreshold;
+	$outpkt = $outpkt.sprintf", %.1f,  %.1f\n",$shadow,$shadowthreshold;
+		# Print Globals
+	for($i=0; $i<7; $i++){
+		$outpkt = $outpkt.sprintf"$g1[$i]  ";
+	}  $outpkt = $outpkt.sprintf"\n";
+	for($i=0; $i<7; $i++){
+		$outpkt = $outpkt.sprintf"$g2[$i]  ";
+	}  $outpkt = $outpkt.sprintf"\n";
 	# HIGH - SHADOW
 	if($pktlen>300){
 		# Sweep chan 0
@@ -112,15 +118,15 @@ if ($cc ne substr($strin,-2)) {
 		for($ia=0; $ia<7; $ia++){
 			for($ib=0; $ib<23; $ib++){
 				$ic = $ia*23 + $ib; # array index
-				print"$sw[$ic] ";
+				$outpkt = $outpkt.sprintf"$sw[$ic] ";
 			}
-			print"\n";
+			$outpkt = $outpkt.sprintf"\n";
 		}
 	}
 }
-
-# 
-print"end\n";
+#print"$outpkt";
+open F,">>$outfile" or die;
+print F $outpkt;
 exit 0;
 
 #=========================================================

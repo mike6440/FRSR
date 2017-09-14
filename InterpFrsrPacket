@@ -127,6 +127,7 @@ if ($cc ne substr($strin,-2)) {
 #print"$outpkt";
 open F,">>$outfile" or die;
 print F $outpkt;
+close F;
 exit 0;
 
 #=========================================================

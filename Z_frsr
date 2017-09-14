@@ -228,7 +228,7 @@ while 1 {
 			close $F
 				# interp raw file
 			spawn InterpFrsrPacket $rawstr $interpname;
-			expect eof; 
+			expect eof;
 #https://www.safaribooksonline.com/library/view/exploring-expect/9781565920903/ch04s05.html 
 		}
 	}

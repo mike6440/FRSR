@@ -17,8 +17,7 @@ use perltools::MRtime;
 
 	## DATA PATH
 my $datapath="$ENV{HomePath}/swmain/apps/FRSR/data";
-print"data path = $datapath\n";
-
+#print"data path = $datapath\n";
 print"
 =========================
    WARNING
@@ -30,15 +29,13 @@ Proceed to delete?  (y or n): ";
 
 my $ans=<>;
 chomp($ans);
-print"You entered $ans\n";
-
+#print"You entered $ans\n";
 if($ans =~ /y/i){
-	print"Delete data\n";
+	#print"Delete data\n";
 	my $cmd="rm -r $datapath/*";
 	#print"cmd=$cmd\n";
 	system $cmd;
 } else {
 	print"No delete.\n";
 }
-
 exit 0;

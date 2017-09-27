@@ -11,6 +11,8 @@ use Time::HiRes ('sleep');
 my ($pktlen,$cc,$packetid,$mode,$shadow,$shadowthreshold,$ix,$i,$i1,$hms,$dmy);
 my (@g1,@g2,@sw, $strin, $lat,$lon,$sog,$cog,$strgps,@w,$outpkt, $outfile);
 $strin=shift();
+$strin =~ s/^\s+//;
+$strin =~ s/\s+$//;
 $outfile=shift();
 	# Locate the last checksum *
 $i1 = 0;
@@ -20,20 +22,23 @@ while ( 1 ){
   $ix=$i;
   $i1=$i+1;
 }
-$strin=substr($strin,0,$ix+3);
-$strin =~ s/^\s+//;
-$strin =~ s/\s+$//;
+	# fix chksums with missing 0, e.g. convert *6 -> *06
+$i1=length($strin);
+if($i1-$ix == 3){
+	$strin=substr($strin,0,$ix+3);
+}else{
+	$strin=substr($strin,0,$ix+1).'0'.substr($strin,-1,1);
+}
 	# TEST LENGTH
 $pktlen=length($strin);
 $#sw = 23 * 7;
 	## CHKSUM TEST
 $cc = NmeaChecksum( substr($strin,0,-2) );
-printf"chksum=%s\n",substr($strin,-2);
-printf"computed chksum=%s\n", $cc;
+#printf"chksum=%s\n",substr($strin,-2);
+#printf"computed chksum=%s\n", $cc;
 if ($cc ne substr($strin,-2)) {
 	print"Checksum fails, skip\n";
 } else {
-die;
 	$ichar=7;
 		# Mode
 	$mode=substr($strin,$ichar,1);

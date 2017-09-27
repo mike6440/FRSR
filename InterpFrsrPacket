@@ -6,11 +6,13 @@
 
 use lib "$ENV{DAQLIB}";
 use perltools::MRtime;
+use Time::HiRes ('sleep');
 
 my ($pktlen,$cc,$packetid,$mode,$shadow,$shadowthreshold,$ix,$i,$i1,$hms,$dmy);
 my (@g1,@g2,@sw, $strin, $lat,$lon,$sog,$cog,$strgps,@w,$outpkt, $outfile);
 $strin=shift();
 $outfile=shift();
+	# Locate the last checksum *
 $i1 = 0;
 while ( 1 ){
   $i = index($strin, "*", $i1);
@@ -26,11 +28,12 @@ $pktlen=length($strin);
 $#sw = 23 * 7;
 	## CHKSUM TEST
 $cc = NmeaChecksum( substr($strin,0,-2) );
-#printf"chksum=%s\n",substr($strin,-2);
-#printf"computed chksum=%s\n", $cc;
+printf"chksum=%s\n",substr($strin,-2);
+printf"computed chksum=%s\n", $cc;
 if ($cc ne substr($strin,-2)) {
 	print"Checksum fails, skip\n";
 } else {
+die;
 	$ichar=7;
 		# Mode
 	$mode=substr($strin,$ichar,1);
@@ -127,6 +130,8 @@ if ($cc ne substr($strin,-2)) {
 	open F,">>$outfile" or die;
 	print F $outpkt;
 	close F;
+		# delay a bit for the full string to be sent.
+	sleep(.05); # 50 ms to complete transfer. This is bull shit.
 }
 exit 0;
 

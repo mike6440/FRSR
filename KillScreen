@@ -12,7 +12,7 @@ while(1){
 	}
 	else {
 		@d=split /\./,$w[1];
-		print"KILL Screen $d[0]\n";
+		#print"KILL Screen $d[0]\n";
 		`kill $d[0]`;
 	}
 }

@@ -133,6 +133,10 @@ write_info $infoname "PROGRAM $PROGRAMNAME, Version $VERSION, Editdate $EDITDATE
 write_info $infoname "INFORMATION FILE: $infoname"
 write_info $infoname  "RT OUT PATH: $datapath"
 
+spawn -noecho getsetupinfo $setupfile "FILEUPDATESECS"
+expect -re "(\.*)(\r)";
+set FILEUPDATESECS $expect_out(1,string)
+write_info $infoname  "FILEUPDATESECS: $FILEUPDATESECS"
 
 	# PDS SERIAL HUB URL AND OFFSET
 spawn -noecho getsetupinfo $setupfile "SERIAL HUB URL"
@@ -184,7 +188,7 @@ expect -re "(\.*)(\r)";
 set frsrport $expect_out(1,string)
 write_info $infoname  "FRSR HUB COM NUMBER: $frsrport"
 	# OPEN SET FILE NAMES AND NOTE TIME
-set day0 0
+set dt0 0
 	# OPEN SERIAL PORTS
 #SpawnFrsr $hub_url $frsrport 
 	# OPEN AVG PROGRAMS
@@ -198,22 +202,25 @@ set timeout 30		;# leave enough time for the scan drum to move
 	#======================
 write_info $infoname "===== BEGIN MAIN LOOP ====="
 send_user "===== BEGIN MAIN LOOP =====\n"
+set istartflag 1;
 	# EXPECT LOOP
 while 1 {
-	# LOOP TIME $dt
+		# LOOP TIME $dt
 	set dt [timestamp -gmt]
-		# CHECK FOR A NEW DAY -- NEW FILES
-	set day1 [timestamp -format "%j" -seconds $dt]
-	if {$day1 != $day0} {
-		set day0 $day1
-		set fname [timestamp -format "%y%m%d" -seconds $dt]
-		write_info $infoname "NEW DAY $fname";
-		set rwname "$datapath/frsr_raw_$fname.txt";
-		write_info $infoname "rwname = $rwname"
-			# decode file
-		set interpname "$datapath/frsr_interp_$fname.txt";
-		write_info $infoname "file interpname = $interpname"
-		send_user "interpname $interpname\n";
+	set thisminute [timestamp -format "%M" -seconds $dt]
+	if { [expr $dt-$dt0] > $FILEUPDATESECS } {
+		if { $istartflag == 1 || $thisminute == 0 } {  ;# forces hourly files
+			set dt0 $dt
+			set fname [timestamp -gmt -format "%y%m%d%H%M" -seconds $dt]
+				# raw file
+			set rwname "$datapath/frsr_raw_$fname.txt";
+			write_info $infoname "New raw file  $rwname"
+				# interp file
+			set interpname "$datapath/frsr_interp_$fname.txt";
+			write_info $infoname "New interp file  $interpname"
+			send_user "New interp file  $interpname\n"
+			set istartflag 0
+		}
 	}
 	#================
 	# EXPECT FUNCTION -- WAITING FOR RESPONSE

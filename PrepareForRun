@@ -53,7 +53,7 @@ $fndata = sprintf "$fndata/data_%s", dtstr($dt0,'iso');
 #========================
 #print"CURRENT SETUP FILE = $ENV{SETUPFILE}\n";
 $fsu = sprintf "%s/su_%s.txt", $fndata, dtstr($dt0,'iso');
-print"SETUP FILE = $fsu\n";
+#print"SETUP FILE = $fsu\n";
 `cp $ENV{SETUPFILE} $fsu`;
 
 
@@ -72,7 +72,7 @@ $cmd=sprintf "perl -pi -e 's!: (.+)!: %s!g if /^RT OUT PATH/' %s", $fndata, $fsu
 #print"\ncmd = $cmd\n";
 system $cmd;
 
-printf"======= READY, %s==========\n", dtstr($dt0,'iso');
+#printf"======= READY, %s==========\n", dtstr($dt0,'iso');
 
 # We want to save this to export it from the shell.
 open(F,'>tmp'); print F "$fsu\n"; close F;

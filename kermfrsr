@@ -13,7 +13,8 @@ set argc [llength $argv]
 #	puts "   kerm232"
 #	puts "--------------------------------"
 
-set inport "/dev/tty.UC-232AC"
+#set inport "/dev/tty.UC-232AC"
+set inport "/dev/ttyr00"
 set bd 115200
 puts "INPUT PORT $inport"
 puts "INPUT BAUD $bd"

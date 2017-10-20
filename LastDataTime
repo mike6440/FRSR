@@ -6,17 +6,22 @@ use perltools::MRtime;
 use perltools::MRutilities;
 
 my (@a, $a, $s, $cmd);
-
-$a = shift();
+	# input
+if($#ARGV<0){
+	print"Error--LastDataTime, missing input\n";
+	exit 1;
+}
+$a = $ARGV[0];
 chomp($a);
 $s = `LastDataRecord $a`;
 chomp($s);
 $s =~ s/^\s+//; $s =~ s/\s+$//;
-open(F,'>/tmp/lastrec') or die;
+open(F,'>/tmp/lastrec') or die"Open /tmp/lastrec fails";
 print F $s;
 close F;
 
 $cmd=sprintf "FrsrPacketTime '%s'",$s;
+#print"test command = $cmd\n";
 $a=`$cmd`;
 chomp($a);
 printf"%s  %s\n",$a,dtstr($a,'ssv');

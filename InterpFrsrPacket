@@ -45,8 +45,11 @@ if ($cc ne substr($strin,-2)) {
 	$outpkt = sprintf"$mode";
 		# GPS time lat lon sog cog
 		#<<$GPRMC,182428,A,3551.0228,N,10616.3582,W,000.0,239.4,280517,>>
+		#,,$GPRMC,182428,A,3551.0228,N,10616.3582,W,000.0,239.4,280517,>>
 	$i=index($strin,'<<');
+	#$i=index($strin,',,');
 	$i1=index($strin,'>>');
+	#print"i=$i, i1=$i1\n"; die;
 	if($i1-$i < 20){
 			# No GPS
 		$dtgps=now();
@@ -55,7 +58,7 @@ if ($cc ne substr($strin,-2)) {
 		$strgps=substr($strin,$i+9,$i1-$i-10);
 		#print"\nstrgps=$strgps\n";
 		@w=split /[, ]+/g, $strgps;
-		#$ii=0;foreach(@w){print"$ii, $_\n"; $ii++;}
+		#$ii=0;foreach(@w){print"$ii, $_\n"; $ii++;} die;
 		$hms=$w[0];
 		$dmy=$w[8];
 		$dtgps=datesec(substr($dmy,4,2)+2000,substr($dmy,2,2),substr($dmy,0,2),substr($hms,0,2),substr($hms,2,2),substr($hms,4,2));

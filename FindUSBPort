@@ -1,6 +1,6 @@
 #!/usr/bin/perl -X
 
-@w = `ls /dev/tty*PL* 2>/dev/null`;
+@w = `ls /dev/tty.usbser* 2>/dev/null`;
 @x = `ls /dev/tty*USB* 2>/dev/null`;
 @y = `ls /dev/tty*UC* 2>/dev/null`;
 @z = `ls /dev/ttyr0* 2>/dev/null`;

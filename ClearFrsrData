@@ -15,21 +15,26 @@ use lib $ENV{MYLIB};
 use perltools::MRutilities;
 use perltools::MRtime;
 
+my $ans = 'n';
 	## DATA PATH
 my $datapath="$ENV{HomePath}/swmain/apps/FRSR/data";
-#print"data path = $datapath\n";
-print"
-=========================
-   WARNING
-=========================
-This process will delete everything from the FRSR/data folder.
-Command \"ArchiveFrsr\" should be used to backup all collected data.
+	# COMMAND LINE
+if($#ARGV >= 0 && $ARGV[0] =~ /y/i){
+	$ans='y';
+}else{
+	print"
+	=========================
+	   WARNING
+	=========================
+	This process will delete everything from the FRSR/data folder.
+	Command \"ArchiveFrsr\" should be used to backup all collected data.
 
-Proceed to delete?  (y or n): ";
+	Proceed to delete?  (y or n): ";
 
-my $ans=<>;
-chomp($ans);
-#print"You entered $ans\n";
+	$ans=<>;
+	chomp($ans);
+	print"You entered $ans\n";
+}
 if($ans =~ /y/i){
 	#print"Delete data\n";
 	my $cmd="rm -r $datapath/*";

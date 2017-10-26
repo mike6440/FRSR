@@ -8,7 +8,8 @@ RT OUT PATH: data
 FILEUPDATESECS: 3600
 
 	# 0 = normal operation,    1 = simulate
-SIMULATEFLAG: 0
+SIMULATEFLAG: 1
+	# looking for ~/frsrdata/simulate/frsr.txt
 	# EXPERIMENT INFO
 EXPERIMENT NAME: MARCUS
 GEOGRAPHIC LOCATION: Seattle

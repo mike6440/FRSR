@@ -14,24 +14,30 @@ use perltools::MRtime;
 
 	## DATA PATH
 my $datapath="$ENV{DAQPATH}/FRSR";
-print"data path = $datapath\n";
+#print"data path = $datapath\n";
 
 	## ARCHIVE PATH
 my $archivepath="$ENV{HOME}/frsrdata";
-print"Archive path=$archivepath\n";
+#print"Archive path=$archivepath\n";
 if(! -d $archivepath){
 	print"Create $archivepath\n";
 	`mkdir $archivepath`;
 }
+	## DATA FILE FOR ARM
+my $dname=sprintf "data_%s",dtstr(now(),'iso');
+#print"dname=$dname\n";
+	## DATA FOLDER COPY CMD
+my $cmd = sprintf "cd $datapath; cp -R data $archivepath/$dname";
+#print"$cmd\n";
+system $cmd;
 
 	## TAR FILE NAME
 my $tarname=sprintf "frsrarchive_%s.tar.gz",dtstr(now(),'iso');
-print"tarname=$tarname\n";
-
+#print"tarname=$tarname\n";
 
 	## TAR COMMAND
-my $cmd = sprintf "cd $datapath; tar -zcf $archivepath/$tarname .";
-print"$cmd\n";
+$cmd = sprintf "cd $datapath; tar -zcf $archivepath/$tarname .";
+#print"$cmd\n";
 system $cmd;
 
 exit 0;

@@ -1,10 +1,12 @@
 #! /usr/bin/perl
-# edit 170805
+# edit 171025 simulate files are moved
 
 use lib $ENV{MYLIB};
 use perltools::MRtime;
 
-$fin="simulate/frsr.txt";
+$fin="$ENV{HOME}/frsrdata/simulate/frsr.txt";
+# print"$fin\n";
+# die;
 
 my $irec = 0;
 my ($i1,$narg,$p);

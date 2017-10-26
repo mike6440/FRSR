@@ -7,8 +7,6 @@ use perltools::MRutilities;
 my @f = ('frsr_raw');
 my @v = ();
 
-printf"NOW = %d  %s\n",now(),dtstr(now(),'ssv');
-
 	# SELECT STREAM
 my ($is,$s,$cmd,$f,$age,@a);
 
@@ -20,7 +18,7 @@ for($is=0; $is<=$#f; $is++){
 	$s = `$cmd`;
 	chomp($s); 
 	$s =~ s/^\s+//; $s =~ s/\s+$//;
-	print"Last rec time = $s\n";
+	printf"%s, Now:%d, Last record:$s  ",$f,now();
 	@a=split /[ ]+/,$s;
 	$s=$a[0];
 		# THE AGE OF THE RECORD
@@ -29,7 +27,7 @@ for($is=0; $is<=$#f; $is++){
 		push @v,0;		
 	} else {
 		$age = now() - $s;
-		print"age = $age\n";
+		print"age:$age secs";
 		if ($age > 600){ print"    FAIL\n"; push @v,0}
 		else{ print"    OK\n"; push @v, 1;  }
 	}

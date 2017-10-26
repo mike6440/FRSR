@@ -24,5 +24,5 @@ $cmd=sprintf "FrsrPacketTime '%s'",$s;
 #print"test command = $cmd\n";
 $a=`$cmd`;
 chomp($a);
-printf"%s  %s\n",$a,dtstr($a,'ssv');
+printf"%s\n",$a;
 exit 0;

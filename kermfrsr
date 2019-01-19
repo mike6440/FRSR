@@ -14,14 +14,19 @@ set argc [llength $argv]
 #	puts "--------------------------------"
 
 #set inport "/dev/tty.UC-232AC"
-set inport "/dev/ttyr00"
+set inport "/dev/tty.usbserial8"
 set bd 115200
 puts "INPUT PORT $inport"
 puts "INPUT BAUD $bd"
 
-
 # START PROCESS -- KERMIT FOR ISAR MODEM
-spawn kermit
+spawn sudo kermit
+expect {
+	"assword" {
+		send "r0srr0sr\n"
+	}
+	">>" { send "\n" }
+}
 set ISAR $spawn_id
 set timeout 4
 

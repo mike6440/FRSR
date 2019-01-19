@@ -8,7 +8,7 @@
 #   kerm232 /dev/ttyusbserial 115200 -- port and baud
 
 
-set log_user 0
+log_user 1
 
 ## DEFINE THE PORTS
 set argc [llength $argv]
@@ -23,11 +23,18 @@ if {$argc == 0} {
 	set inport [lindex $argv 0]
 	set bd [lindex $argv 1]
 }
-#puts "INPUT PORT $inport"
-#puts "INPUT BAUD $bd"
+send_user "port $inport\n";
+send_user "speed $bd\n";
+
 
 # START PROCESS -- KERMIT FOR ISAR MODEM
-spawn kermit
+spawn sudo kermit
+expect {
+	"assword" {
+		send "r0srr0sr\n"
+	}
+	">>" { send "\n" }
+}
 set ISAR $spawn_id
 set timeout 4
 
@@ -44,6 +51,7 @@ expect ">>"
 #send_user "set line $inport\n";
 ## SPEED
 send "set speed $bd\r"
+expect ">>"
 ## DUPLEX
 send "set duplex full\r"
 expect ">>"
@@ -58,6 +66,7 @@ send "set carrier-watch off\r"
 expect ">>"
 ## LOG
 send "log session ../data/capture_kerm232.txt append\r"
+puts "APPEND to ../data/capture_kerm232.txt"
 expect ">>"
 ## CONNECT 
 send "connect\r"

@@ -1,45 +1,72 @@
-170808
-       Enter "Help" to read.   Press 'q' to end this sheet  !!!!
+190115
+       Enter "help" to read.   Press 'q' to end this sheet  !!!!
        Enter "gedit help.txt" to edit.  ^q to quit
 
 ssh oper@198.129.80.47      password: r0srr0sr  (use ifconfig for wifi ip#)
 
-gtdaq                                             -> go to "~/swmain/apps/FRSR/sw/$ "
-Bat                                               -> battery charge (if we're using a laptop)
-
-    ----TIME
-Date                                              ->  2015 10 19 18 03 57 Z
-SetDate <password> yyyy MM dd hh mm ss            ->  sets the PC clock
-  example:
-    SetDate r0srr0sr 2016 05 20 17 23 30<enter>
-
-    ----START OPERATION
-Startfrsr                                         ->  Begin data collection
-frsrraw                                           ->  Confirm data flow  (^c to end)
-
-    ---- STOP OPERATION
-Stopfrsr                                          ->  End data collection
-
-    ---- ARCHIVE DATA
-ArchiveFrsr                                       -> Makes an archive file in /home/rmr/frsrdata
-ClearFrsrData                                     -> Clears the data folder. (Checks y or n)
-
-    ---- DIRECT CONNECT
-P                                                 ->  direct connect to GPS
-I                                                 ->  direct connect to FRSR, "^\ q" to end
-  T                                               ->    FRSR terminal mode
-    ?                                             ->    terminal menu
-    g                                             ->    Go. End terminal session. Start operation.
-^\ q                                              ->  end direct connect.
-e.g. Hold down <Crtl> and '\'. Release and press 'q'. 
-
-    ---- VIEW DATA
-frsrraw                                           ->  show $WIROS raw data, 280 sec, ^c to end
-^c                                                -> end session
 
     ---- FRSR OUTPUT PACKETS
-frsraw                                            -> packet only
 $FSR03,L,40.6,<<$GPRMC,145203,A,3551.0201,N,10616.3598,W,000.0,188.4,010817,>>,83B3,?M<M,mPmP,J1c4f3Z3O344?2,L...,*6A
 Head temp = 40.6,      hhmmss                                        ddMMyy      Psuedo ascii ...                  chk
 
----- END 
+#--BASIC--------
+  gtdaq                                       ->  cd ~/swmain/apps/FRSR/sw
+  iss                                         ->  is DAQ running?
+  Bat                                         -> battery charge (if we're using a laptop)
+#--TIME !! always UTC -----
+  Date                                        ->  2018 10 19 18 03 57 Z
+  SetDate <password> yyyy MM dd hh mm ss      ->  sets the PC clock.
+  example:
+    SetDate r0srr0sr 2017 08 20 17 23 30
+#-SETUP FILE -----
+  less setup/su.txt                       ->  current DAQ setup file.
+  nano setup/su.txt                       -> optional, edit as necessary.
+#-START DAQ ------
+  Start                                   ->  Begin DAQ in background screen
+  Raw                             		  ->  Confirm data flow  (^c to end)
+#-MIDCRUISE BACKUP -----------
+  Remember S-A-W-S daily to weekly
+  Stop                             		-> stop DAQ.
+  Archive                          		-> make a data archive in ~/rosrdata/  
+  Wipe y                           		-> erase (wipe) the data folder.
+  Start                            		-> re-start DAQ
+#-END OF CRUISE SHUTDOWN------
+  Stop                            		-> stop DAQ.
+  Archive                          		-> make a data archive in ~/rosrdata/  
+  Wipe y                           		-> erase (wipe) the data folder.
+  Shutdown                     			-> Close shutter and go to standby.
+
+#-MISC COMMANDS
+#-POWER (only if iBoot) ------
+  Bat                                   ->  Laptop PC battery status
+#--VIEW DATA-----------
+  Raw                                   ->  $WIROS raw data, 2 sec, ^c to end
+  Avg                                   ->  PC avg file, 10 min, (5,15,25,...,55)
+#-GPS DIRECT CONNECT---------
+  P                                     -> direct connect to GPS
+#-FRSR DIRECT CONNECT---------
+  I                                     -> direct connect to FRSR, "^\ q" to end
+    T                                   -> FRSR test  '>' prompt
+      e                                 -> contents of the eeprom
+      ?                                 -> terminal menu
+      fc                                -> close shutter
+      fo                                -> open shutter
+      g                                 -> Go. End terminal session. Start operation.
+  note jumps to operation automatically after 1 min inactivity.
+#-END DIRECT CONNECT-----------
+  ^\ q                                  -> end direct connect. 
+                            hold <control> and press <backslash>, release, press <q>
+
+#-----------------------------
+#--PC PREPARATION
+#-----------------------------
+  Suspend                           never
+  Time zone                         sudo dpkg-reconfigure tzdata
+                                    select UTC
+
+       
+  
+  
+  
+---END -----------------
+

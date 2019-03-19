@@ -1,4 +1,11 @@
-//NOTE:
+#include <Adafruit_ADS1015.h>
+#include <string.h>
+#include <math.h>
+#include <SoftwareSerial.h>
+#include <EEPROM.h>
+#include <Wire.h>
+
+#//NOTE:
 
 #define PROGRAMNAME "frsr_main"
 #define VERSION		"14"
@@ -40,14 +47,6 @@
 // v14 -- diff heater plan
   
   
-//NOTE   INCLUDES
-#include <string.h>
-#include <math.h>
-#include <SoftwareSerial.h>
-#include <EEPROM.h>
-
-#include <Wire.h>
-#include <Adafruit_ADS1015.h>
 Adafruit_ADS1115 ads0(0x48);	// ad0, u13, construct an ads1115 at address 0x48
 
 //NOTE   DEFINES
@@ -2475,4 +2474,3 @@ byte nmea_validateChecksum(char *strPtr)
 	}
 	return NOTOK;
 }
-

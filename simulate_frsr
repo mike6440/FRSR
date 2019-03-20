@@ -4,9 +4,7 @@
 use lib $ENV{MYLIB};
 use perltools::MRtime;
 
-$fin="$ENV{HOME}/frsrdata/simulate/frsr.txt";
-# print"$fin\n";
-# die;
+$fin="$ENV{HomePath}/data/frsr.txt";
 
 my $irec = 0;
 my ($i1,$narg,$p);

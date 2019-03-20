@@ -1,5 +1,10 @@
 THIS FILE: su_frsr0.txt
-Editdate: 190115
+Editdate: 190320
+
+	# 0 = normal operation,    1 = simulate
+SIMULATEFLAG: 1
+
+
 FRSRSN: 3-1
 MFRSN: 374
 	# DATA FILES
@@ -7,8 +12,6 @@ RT OUT PATH: data
 	# time between file updates. Usually 86400. For ARM 3600
 FILEUPDATESECS: 3600
 
-	# 0 = normal operation,    1 = simulate
-SIMULATEFLAG: 0
 	# looking for ~/frsrdata/simulate/frsr.txt
 	# EXPERIMENT INFO
 EXPERIMENT NAME: testing

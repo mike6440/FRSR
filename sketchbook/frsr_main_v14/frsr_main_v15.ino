@@ -48,6 +48,9 @@
   
   
 Adafruit_ADS1115 ads0(0x48);	// ad0, u13, construct an ads1115 at address 0x48
+Adafruit_ADS1115 ads1(0x49);    // ad1, u16, construct an ads1115 at address 0x49
+// Read a different socket. u16
+
 
 //NOTE   DEFINES
 #define PKTHEADER	"$FSR03,\0"	// the start of the packet
@@ -341,8 +344,11 @@ void setup() {
 	// ADS1115 ADC
 	//Serial.println("Getting single-ended readings from AIN0..3");
 	//Serial.println("ADC Range: +/- 6.144V (1 bit = .15mV)");
-	ads0.begin();
-	ads0.setGain(GAIN_ONE);	  // 1x gain   +/- 4.096V
+// v
+// 	ads0.begin();
+// 	ads0.setGain(GAIN_ONE);	  // 1x gain   +/- 4.096V
+	ads1.begin();
+	ads1.setGain(GAIN_ONE);	  // 1x gain   +/- 4.096V
 	//  ads0.setGain(GAIN_ONE);	  // 1x gain   +/- 4.096V  1 bit = 2mV
 	//  ads0.setGain(GAIN_TWO);	  // 2x gain   +/- 2.048V  1 bit = 1mV
 	//  ads0.setGain(GAIN_FOUR);	  // 4x gain   +/- 1.024V  1 bit = 0.5mV

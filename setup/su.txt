@@ -1,8 +1,8 @@
 THIS FILE: su_frsr0.txt
-Editdate: 190320
+Editdate 190522
 
 	# 0 = normal operation,    1 = simulate
-SIMULATEFLAG: 1
+SIMULATEFLAG: 0
 
 
 FRSRSN: 3-1
@@ -14,11 +14,11 @@ FILEUPDATESECS: 3600
 
 	# looking for ~/frsrdata/simulate/frsr.txt
 	# EXPERIMENT INFO
-EXPERIMENT NAME: testing
-GEOGRAPHIC LOCATION: Seattle
+EXPERIMENT NAME: langley
+GEOGRAPHIC LOCATION: mlo
 PLATFORM NAME: NA
-LOCATION ON PLATFORM: NA
-HEIGHT ABOVE SEA LEVEL m: NA
+LOCATION ON PLATFORM: roof deck
+HEIGHT ABOVE SEA LEVEL m: 3397
 SHIP TYPE: NA
 SHIP NAME: NA
 CRUISE NAME: NA
@@ -33,15 +33,15 @@ END
 GPS 
 	# FIXED POSITION -- NO GPS
 	# UW OCEAN DOCK
-GPS FIXED LATITUDE: 47.64962
-GPS FIXED LONGITUDE: -122.31312
+     GPS FIXED LATITUDE: 47.64962
+     GPS FIXED LONGITUDE: -122.31312
 	# Magnetic variation, + = East of true.  true=mag-var
-GPS FIXED VARIATION: 16.2
-		# MOSS BAY
-	GPS FIXED LATITUDE: 35
-	GPS FIXED LONGITUDE: -122
-			Magnetic variation, + = East of true
-	GPS FIXED VARIATION: 18.1
+     GPS FIXED VARIATION: 16.2
+        # MLO
+GPS FIXED LATITUDE: 19.5362
+GPS FIXED LONGITUDE: -155.5763
+        # Magnetic variation, + = East of true.  true=mag-var
+GPS FIXED VARIATION: ??
 	========================
 		END SETUP FILE
 	========================

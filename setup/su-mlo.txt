@@ -2,7 +2,7 @@ THIS FILE: su_frsr0.txt
 Editdate 190522
 
 	# 0 = normal operation,    1 = simulate
-SIMULATEFLAG: 1
+SIMULATEFLAG: 0
 
 
 FRSRSN: 3-1

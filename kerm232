@@ -26,7 +26,6 @@ if {$argc == 0} {
 send_user "port $inport\n";
 send_user "speed $bd\n";
 
-
 # START PROCESS -- KERMIT FOR ISAR MODEM
 spawn sudo kermit
 expect {
